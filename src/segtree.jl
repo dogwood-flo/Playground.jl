@@ -1,4 +1,4 @@
-mutable struct SegTree{T, F<:Function}
+mutable struct SegTree{T, F}
     len::Int
     data::Vector{T}
     binary_op::F
@@ -28,11 +28,11 @@ function SegTree(data::Vector{T}, init::T, binary_op::F) where {T, F}
 end
 
 
-function update!(st::SegTree, idx::Int, value)
+function update!(st::SegTree, idx::Int, value::T; f::F = (x, new)->new) where {T, F}
     n = length(st.data) >> 1
     i = idx + n
 
-    st.data[i] = value
+    st.data[i] = f(st.data[i], value)
     while i > 1
         i = div(i, 2)
         st.data[i] = st.binary_op(st.data[2 * i], st.data[2 * i + 1])
